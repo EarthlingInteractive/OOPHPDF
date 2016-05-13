@@ -5,6 +5,14 @@ An object-oriented wrapper for writing PDF documents using PHP and TCPDF
 
 OOPHPDF is a PHP library that provides an object-oriented interface to common TCPDF drawing methods.  Examples of implemented objects include the MultiCell, Image, and a basic Table with Rows that contain cells.  Instead of directly calling TCPDF methods to draw items, you create an object that represents the item you want to draw, configure it, query it as needed, then draw it.
 
+## Installation
+
+OOPHPDF can be installed as a Composer module.  If you're using Composer, you can install it with:
+
+```
+composer require earthlinginteractive/oophpdf
+```
+
 ## Why?
 
 TCPDF is great for writing PDF documents, but its state-based design can be limiting when writing complex documents.
