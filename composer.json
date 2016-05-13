@@ -1,0 +1,8 @@
+{
+    "name": "earthlinginteractive/oophpdf",
+    "description": "An object-oriented wrapper for writing PDF documents using PHP and TCPDF",
+    "require": {
+        "tecnickcom/tcpdf": "^6.2"
+    },
+    "license": "MIT"
+}
