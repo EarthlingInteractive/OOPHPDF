@@ -4,5 +4,10 @@
     "require": {
         "tecnickcom/tcpdf": "^6.2"
     },
+    "autoload": {
+        "psr-0": {
+            "OOPHPDF": "lib/"
+        }
+    },
     "license": "MIT"
 }
