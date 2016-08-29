@@ -363,7 +363,7 @@ class OOPHPDF_Table extends OOPHPDF_Object implements OOPHPDF_Drawable, OOPHPDF_
 			$startY = $this->pdf->getY();
 
 
-			$remainingPageHeight = $this->pdf->getPageRemainingHeight();
+			$remainingPageHeight = $this->getPageRemainingHeight();
 			$minHeightNeeded = $getMinHeightNeeded($startingIndex);
 
 			//Add a new page if needed
@@ -382,7 +382,7 @@ class OOPHPDF_Table extends OOPHPDF_Object implements OOPHPDF_Drawable, OOPHPDF_
 				//If row is set to be skipped or outside valid key range, continue
 				if ($row->getSkip() || $rowKey < $startingIndex) continue;
 
-				$remainingPageHeight = $this->pdf->getPageRemainingHeight();
+				$remainingPageHeight = $this->getPageRemainingHeight();
 
 				//If there is not enough space on the current page, indicate that a page break is in process and add a page
 				if ($getMinHeightNeeded($rowKey) > $remainingPageHeight) {
