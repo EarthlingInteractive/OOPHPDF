@@ -44,22 +44,6 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		3 => 'R'
 	);
 
-	// path to image file to optionally draw at location of this multicell
-	private $imageFilename;
-	// allow the container you place the image into to be smaller than the multicell by some amount of padding
-	private $imagePaddingX = 0;
-	private $imagePaddingY = 0;
-
-	public function __construct(TCPDF $pdf, $imageFilename = null, $imagePaddingX = 0, $imagePaddingY = 0) {
-
-		parent::__construct($pdf);
-
-		$this->imageFilename = $imageFilename;
-		$this->imagePaddingX = $imagePaddingX;
-		$this->imagePaddingY = $imagePaddingY;
-
-	}
-
 	public function getRotation() {
 		return $this->rotation;
 	}
@@ -514,29 +498,6 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		}
 
 		$this->pdf->MultiCell($width, $height, $this->getText(), $border, $this->getAlignHorizontal(), $this->getFillColorArray() !== null, $this->getLn(), $x, $y, true, 0, false, true, $height, $this->getAlignVertical(), $this->getFitCell(), true);
-
-		if (!is_null($this->imageFilename)) {
-			$imageStartX = $startingX + $this->imagePaddingX;
-			$imageStartY = $startingY + $this->imagePaddingY;
-
-			$paddedWidth = $width - $this->imagePaddingX * 2.0;
-			$paddedHeight = $height - $this->imagePaddingY * 2.0;
-
-			// We want to fill the MultiCell in one direction and center in the other direction, without distorting the aspect ratio.
-
-			// first, try scaling to height of cell
-			$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $imageStartX, $imageStartY, null, $paddedHeight);
-			if ($image->getScaledWidth() > $paddedWidth) {
-				// scaled image is wider than cell, so scale to width instead
-				$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $imageStartX, $imageStartY, $paddedWidth, null);
-			}
-
-			// center scaled image
-			$image->setX($imageStartX + ($paddedWidth - $image->getScaledWidth()) / 2.0);
-			$image->setY($imageStartY + ($paddedHeight - $image->getScaledHeight()) / 2.0);
-			
-			$image->draw();
-		}
 
 		if ($this->rotation != 0) {
 			$this->pdf->stopTransform();
