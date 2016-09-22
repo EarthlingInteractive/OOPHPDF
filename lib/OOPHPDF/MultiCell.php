@@ -47,7 +47,6 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 	// path to image file to optionally draw at location of this multicell
 	private $imageFilename;
 
-
 	public function __construct(TCPDF $pdf, $imageFilename = null) {
 
 		parent::__construct($pdf);
@@ -512,7 +511,20 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		$this->pdf->MultiCell($width, $height, $this->getText(), $border, $this->getAlignHorizontal(), $this->getFillColorArray() !== null, $this->getLn(), $x, $y, true, 0, false, true, $height, $this->getAlignVertical(), $this->getFitCell(), true);
 
 		if (!is_null($this->imageFilename)) {
-			$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $startingX, $startingY, $width, $height);
+
+			// We want to fill the MultiCell in one direction and center in the other direction, without distorting the aspect ratio.
+
+			// first, try scaling to height of cell
+			$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $startingX, $startingY, null, $height);
+			if ($image->getScaledWidth() > $width) {
+				// scaled image is wider than cell, so scale to width instead
+				$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $startingX, $startingY, $width, null);
+			}
+
+			// center scaled image
+			$image->setX($startingX + ($width - $image->getScaledWidth()) / 2.0);
+			$image->setY($startingY + ($height - $image->getScaledHeight()) / 2.0);
+			
 			$image->draw();
 		}
 
