@@ -44,7 +44,17 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		3 => 'R'
 	);
 
+	// path to image file to optionally draw at location of this multicell
+	private $imageFilename;
 
+
+	public function __construct(TCPDF $pdf, $imageFilename = null) {
+
+		parent::__construct($pdf);
+
+		$this->imageFilename = $imageFilename;
+
+	}
 
 	public function getRotation() {
 		return $this->rotation;
@@ -500,6 +510,11 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		}
 
 		$this->pdf->MultiCell($width, $height, $this->getText(), $border, $this->getAlignHorizontal(), $this->getFillColorArray() !== null, $this->getLn(), $x, $y, true, 0, false, true, $height, $this->getAlignVertical(), $this->getFitCell(), true);
+
+		if (!is_null($this->imageFilename)) {
+			$image = new OOPHPDF_Image($this->pdf, $this->imageFilename, $startingX, $startingY, $width, $height);
+			$image->draw();
+		}
 
 		if ($this->rotation != 0) {
 			$this->pdf->stopTransform();
