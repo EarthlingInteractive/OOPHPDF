@@ -2,7 +2,8 @@
     "name": "earthlinginteractive/oophpdf",
     "description": "An object-oriented wrapper for writing PDF documents using PHP and TCPDF",
     "require": {
-        "tecnickcom/tcpdf": "^6.0"
+        "tecnickcom/tcpdf": "^6.0",
+        "goat1000/svggraph": "~2.23.1"
     },
     "autoload": {
         "psr-0": {
