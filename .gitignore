@@ -1,3 +1,7 @@
 .vagrant/
 vendor/
 composer.lock
+
+tags
+.*.swp
+*.pdf
