@@ -44,8 +44,6 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		3 => 'R'
 	);
 
-
-
 	public function getRotation() {
 		return $this->rotation;
 	}
