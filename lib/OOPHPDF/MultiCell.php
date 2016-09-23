@@ -34,7 +34,7 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 	private $border = '';
 
 	private $ln = 1;
-	
+
 	private $fitCell = false;
 
 	private $translationMap = array(
@@ -416,13 +416,13 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 		$this->ln = $ln;
 		return $this;
 	}
-	
-	
-	
+
+
+
 	public function getFitCell() {
 		return $this->fitCell;
 	}
-	
+
 	public function setFitCell($fitCell) {
 		$this->fitCell = $fitCell;
 		return $this;
@@ -436,7 +436,7 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 
 		return $this->pdf->GetStringWidth($this->getText()) + $paddings['L'] + $paddings['R'] + 0.01;
 	}
-	
+
 	public function setWidthToAuto() {
 		$this->setWidth($this->getWidthAuto());
 		return $this;
@@ -499,7 +499,7 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 
 		}
 
-		$this->pdf->MultiCell($width, $height, $this->getText(), $border, $this->getAlignHorizontal(), $this->getFillColorArray() !== null, $this->getLn(), $x, $y, true, 0, false, true, $height, $this->getAlignVertical(), $this->getFitCell(), true);
+		$this->pdf->MultiCell($width, $height, $this->getText(), $border, $this->getAlignHorizontal(), $this->getFillColorArray() !== null, $this->getLn(), $x, $y, true, 0, false, true, $height, $this->getAlignVertical(), $this->getFitCell());
 
 		if ($this->rotation != 0) {
 			$this->pdf->stopTransform();
