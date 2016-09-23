@@ -65,7 +65,7 @@ $legendLabelSettings = [
 // them, are used in the order of the array
 $pg->setWedgeAndLegendColorsRgb($wedgeAndLegendColors);
 
-$pg->setPieWedgeValues();
+$pg->setPieWedgeValues($wedgeAndLegendBoxValues);
 
 // Suppress the default labeling in the pie wedges.
 $pg->mergeSvgGraphicSettings(array("show_data_labels" => false));
@@ -77,10 +77,10 @@ $pg->mergeLegendBoxSettings($legendBoxSettings);
 $pg->mergeLegendLabelSettings($legendLabelSettings);
 
 // space between legend block and label text
-$pg->setLegendLabelLeftPadding(0.08)
+$pg->setLegendLabelLeftPadding(0.08);
 
 //space between legend blocks/text lines
-$pg->setLegendVerticalSpacing(0.2)
+$pg->setLegendVerticalSpacing(0.2);
 
 // Affects the diameter of the pie itself (the smallest controls diameter, but
 // these dimensions shape the graphic the pie is contained within.)
@@ -88,14 +88,14 @@ $pg->setSvgGraphicHeight(120.0);
 $pg->setSvgGraphicWidth(120.0);
 
 // offset the pie to the left of where ever the legend is drawn.
-$pg->setPieOffsetX(-1.3);
+$pg->setPieOffsetX(-2.3);
 // top of pie will now be at same x position as where the legend is drawn
 $pg->setPieOffsetY(0.0);
 
 
 $x = 4.5;
 $y = 2.75;
-$pd->drawAtPosition($x, $y);
+$pg->drawAtPosition($x, $y);
 
 // output the document
 $pdf->Output('document.pdf', 'I');
