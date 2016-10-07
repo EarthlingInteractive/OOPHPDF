@@ -51,32 +51,35 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 
 	/*
 	 * There is a relationship between the aspect_ratio setting and these width &
-   * height values. If aspect_ratio in the graph_settings array is 1.0, the
-   * smallest value for width or height here controls the size of the circle
-   * (the pie proper); HOWEVER, the svg image itself is rectilinear, the height
-   * and width of which is set here (give it a border and this becomes visible).
-   * The circular pie is then drawn inside it.
+	 * height values. If aspect_ratio in the graph_settings array is 1.0, the
+	 * smallest value for width or height here controls the size of the circle
+	 * (the pie proper); HOWEVER, the svg image itself is rectilinear, the height
+	 * and width of which is set here (give it a border and this becomes visible).
+	 * The circular pie is then drawn inside it.
 	 *
 	 * The pie can be made smaller in diameter even when these values are larger
-   * by setting the padding to take up space and force the pie to be sized to
-   * fit what's left over inside the dimensions of the graphic. So if width
-   * were 300 and height were 200, a pie circle of 100 would be the result
-   * IF top and/or bottom padding = 100 OR left and/or right padding = 200.
+	 * by setting the padding to take up space and force the pie to be sized to
+	 * fit what's left over inside the dimensions of the graphic. So if width
+	 * were 300 and height were 200, a pie circle of 100 would be the result
+	 * IF top and/or bottom padding = 100 OR left and/or right padding = 200.
 	 *
 	 * This also means the pie circle can be "moved around" inside the area of
-   * the svg image. (could be useful when applying a border to the svggraphic
-   * for layout purposes.)
+	 * the svg image. (could be useful when applying a border to the svggraphic
+	 * for layout purposes.)
 	 */
 	protected $svgGraphicWidth = 100.0;
 	protected $svgGraphicHeight = 100.0;
 
+	// the border around the rectilinear svg image, not the pie shape itself
+	protected $imageSvgBorder;
+
 	/**
-   * 'Override' the default settings for SVGGraph and SVGGraphPieGraph set
-   * in svggraph.ini in the SVGGraph library. There are dozens of default
-   * settings, so if something with SVGGraph is not working as you expect,
-   * you might want to check that file.
-   *
-   * @see "svggraph.ini"
+	 * 'Override' the default settings for SVGGraph and SVGGraphPieGraph set
+	 * in svggraph.ini in the SVGGraph library. There are dozens of default
+	 * settings, so if something with SVGGraph is not working as you expect,
+	 * you might want to check that file.
+	 *
+	 * @see "svggraph.ini"
 	 * @var array $svgGraphSettings
 	 */
 	protected $svgGraphSettings = array(
@@ -136,15 +139,32 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 		'cellPaddingBottom' => 0.0
 	);
 
+	public function __construct(TCPDF $pdf) {
+		parent::__construct($pdf);
+
+		// set a default value for the border of the svg image
+		$this->setInitialBorderValues();
+	}
+
+	protected function setInitialBorderValues() {
+		// empty array == no border, commenting out
+		// internal structure to document keys:values
+		$this->imageSvgBorder = array(/* 'LTRB' => array('width' => .01,
+			'cap' => 'butt',
+			'join' => 'miter',
+			'dash' => 0,
+			'color' => Align_EP_UtilPdfColor::$RGB_HEADER_FILL_DARK) */);
+	}
+
 	/**
 	 * Sets the width of the svg graphic, within which the pie circle is drawn.
 	 *
 	 * The graphic is rectilinear, and it can be larger than the pie.
-   * (set $svgGraphSettings=>pad_left, pad_right, or a combo of both to force
-   * the pie circle to become a smaller inside the graphic area proper.)
+	 * (set $svgGraphSettings=>pad_left, pad_right, or a combo of both to force
+	 * the pie circle to become a smaller inside the graphic area proper.)
 	 *
 	 * @param float $width 	a value in the pdf's units of the graphic the pie
-   *                      circle is contained within.
+	*                      circle is contained within.
 	 */
 	public function setSvgGraphicWidth($width) {
 		$this->svgGraphicWidth = $width;
@@ -154,16 +174,27 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 	 * Sets the height of the svg graphic, within which the pie circle is drawn.
 	 *
 	 * The graphic is rectilinear, and it can be larger than the pie.
-   * (set $svgGraphSettings=>pad_top, pad_bottom, or a combo of both to force
-   * the pie circle to become a smaller inside the graphic area proper.)
+	 * (set $svgGraphSettings=>pad_top, pad_bottom, or a combo of both to force
+	 * the pie circle to become a smaller inside the graphic area proper.)
 	 *
 	 * @param $height float 	a value in the pdf's units of the graphic the pie
-   *                        circle is contained within.
+	 *                        circle is contained within.
 	 */
 	public function setSvgGraphicHeight($height) {
 		$this->svgGraphicHeight = $height;
 	}
 
+	/**
+	 * Sets border attributes around the svg image (not the pie itself)
+	 * when it is imported into the pdf.
+	 *
+	 * @param array $border	the values for the border
+	 * @see #setInitialBorderValues() for key:value pairs of the array
+	 * @see #drawPie($curX, $curY) for where this is used
+	 */
+	public function setImageSvgBorder(array $border) {
+		$this->imageSvgBorder = $border;
+	}
 
 	public function setPieOffsetX($pieOffsetX) {
 		$this->pieOffsetX = $pieOffsetX;
@@ -177,9 +208,9 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 
 	/**
 	 * True or false whether to display the MultiCell's legend (not the SVGGraph
-   * legend; that is not used, the TCPDF's MultiCell is used to draw the legend
-   * instead as it it more flexible).
-   *
+	 * legend; that is not used, the TCPDF's MultiCell is used to draw the legend
+	 * instead as it it more flexible).
+	 *
 	 * @param $isDisplayLegend
 	 * @return $this
 	 */
@@ -201,7 +232,7 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 	/**
 	 * The colors are used in coloring the pie wedges as well as coloring
 	 * the corresponding legend blocks, if the legend display is enabled.
-   *
+	 *
 	 * @param array $colors example: [255, 255, 255] for white
 	 * @return $this
 	 */
@@ -213,7 +244,7 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 	/**
 	 * Sets key/value pairs for legend names to graph values.
 	 * Expects this format: legendLabelName => graphValue
-   *
+	 *
 	 * @param array $values
 	 * @return $this
 	 */
@@ -222,10 +253,11 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 		return $this;
 	}
 
+
 	/**
 	 * A means to 'override' the values in SVGGraph's default settings array.
-   *
-   * @see "svggraph.ini"
+	 *
+	 * @see "svggraph.ini"
 	 * @param array $graphicSettings
 	 */
 	public function mergeSvgGraphicSettings(array $graphicSettings) {
@@ -235,9 +267,9 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 
 	/**
 	 * A means to 'override' the many default settings used by OOPHPDF_MultiCell
-   * for drawing the legend boxes.
-   *
-   * @see "OOPHPDF_Multicell"
+	 * for drawing the legend boxes.
+	 *
+	 * @see "OOPHPDF_Multicell"
 	 * @param array $legendBoxSettings
 	 */
 	public function mergeLegendBoxSettings(array $legendBoxSettings) {
@@ -248,7 +280,7 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 	/**
 	 * A means to 'override' the many default settings used by MultiCell for
 	 * drawing the legend label text.
-   *
+	 *
 	 * @param array $legendLabelSettings
 	 */
 	public function mergeLegendLabelSettings(array $legendLabelSettings) {
@@ -256,9 +288,9 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 		$this->legendLabelSettings = $newSettings;
 	}
 
-  public function setEmptyPieTextColor(array $rgbColor) {
-    $this->emptyPieTextColor = $rbgColor;
-  }
+	public function setEmptyPieTextColor(array $rgbColor) {
+		$this->emptyPieTextColor = $rbgColor;
+	}
 
 	public function draw() {
 		$this->drawAtPosition($this->pdf->getX(), $this->pdf->getY());
@@ -281,10 +313,24 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 		}
 	}
 
-  /**
-   * Creates the pie circle as an SVG image using SVGGraph, then imports it
-   * into the pdf using TCPDF.
-   */
+	/**
+	 * Creates the pie circle as an SVG image using SVGGraph, then imports it
+	 * into the pdf using TCPDF.
+	 * <p>
+	 * The x/y define the origin of where to begin drawing the svg graphic;
+	 * this is the upper left corner of image.
+	 * <p>
+	 * To draw the svg graphic this method calls SVGGraph->Fetch
+	 * <p>
+	 * To import the svg graphic into the pdf this method calls TCPDF->ImageSVG
+	 * <p>
+	 * ImageSVG params:
+	 * $file, $x='', $y='', $w=0, $h=0, $link='', $align='', $palign='',
+	 * 	$border=0, $fitonpage=false
+	 *
+	 * @param float $curX	the x position
+	 * @param float $curY	the y position
+	 */
 	public function drawPie($curX, $curY) {
 
 		// process the values and colors, to deal with a bug in SVGGraph where a value of 0
@@ -314,11 +360,7 @@ class OOPHPDF_PieGraph extends OOPHPDF_Object implements OOPHPDF_Drawable  {
 		'',  // link
 		'',  // align
 		'',  // palign
-		array(/*'LRB' => array('width' => .02,
-							'cap' => 'butt',
-							'join' => 'miter',
-							'dash' => 0,
-							'color' => array(108, 109, 112)) */)
+		$this->imageSvgBorder
 		);
 	}
 
