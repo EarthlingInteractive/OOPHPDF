@@ -19,6 +19,7 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 	private $cellPaddingRight = 0;
 	private $cellPaddingBottom = 0;
 
+	private $fontFamily = '';
 	private $fontStyle = '';
 	private $fontSize;
 
@@ -256,6 +257,17 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 
 		return $this;
 
+	}
+
+
+
+	public function getFontFamily() {
+		return $this->fontFamily;
+	}
+
+	public function setFontFamily($family) {
+		$this->fontFamily = $family;
+		return $this;
 	}
 
 
@@ -517,7 +529,7 @@ class OOPHPDF_MultiCell extends OOPHPDF_Object implements OOPHPDF_Drawable {
 
 		$paddings = $this->getTranslatedCellPaddings();
 
-		$this->pdf->SetFont('', $this->getFontStyle(), $this->getFontSize(), '', 'default', $drawing);
+		$this->pdf->SetFont($this->getFontFamily(), $this->getFontStyle(), $this->getFontSize(), '', 'default', $drawing);
 		$this->pdf->SetTextColorArray($this->getTextColorArray());
 
 		$this->pdf->setCellPaddings($paddings['L'], $paddings['T'], $paddings['R'], $paddings['B']);
